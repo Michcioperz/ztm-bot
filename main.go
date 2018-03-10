@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	feed, err := fetchBasicFeed()
+	feed, err := FetchEnhancedFeed()
 	fmt.Printf("%+v %+v\n", feed, err)
 }

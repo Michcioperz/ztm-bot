@@ -1,8 +1,7 @@
 package main
 
 import (
-	"errors"
-	//"github.com/PuerkitoBio/goquery"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/SlyMarbo/rss"
 )
 
@@ -14,18 +13,37 @@ func fetchBasicFeed() ([]*rss.Item, error) {
 	return feed.Items, nil
 }
 
-func enhanceBasicItem(it rss.Item) (*rss.Item, error) {
-	return nil, errors.New("not implemented yet")
+func enhanceBasicItem(it *rss.Item) (rss.Item, error) {
+	doc, err := goquery.NewDocument(it.Link)
+	if err != nil {
+		return *it, err
+	}
+	content := doc.Find("#PageContent").Text()
+	newIt := rss.Item{
+		Title: it.Summary,
+		Summary: it.Title,
+		Content: content,
+		Link: it.Link,
+	}
+	return newIt, nil
 }
 
 func enhanceBasicFeed(feed []*rss.Item) ([]*rss.Item, error) {
 	newFeed := []*rss.Item{}
 	for _, it := range feed {
-		newIt, err := enhanceBasicItem(*it)
+		newIt, err := enhanceBasicItem(it)
 		if err != nil {
 			return newFeed, err
 		}
-		newFeed = append(newFeed, newIt)
+		newFeed = append(newFeed, &newIt)
 	}
 	return newFeed, nil
+}
+
+func FetchEnhancedFeed() ([]*rss.Item, error) {
+	basicFeed, err := fetchBasicFeed()
+	if err != nil {
+		return basicFeed, err
+	}
+	return enhanceBasicFeed(basicFeed)
 }
