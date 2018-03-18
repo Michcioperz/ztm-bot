@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	feed, err := FetchEnhancedFeed()
-	fmt.Printf("%+v %+v\n", feed, err)
+	events, err := FetchZTMevents()
+	fmt.Printf("%+v %+v\n", events, err)
 }
