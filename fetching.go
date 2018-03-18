@@ -70,22 +70,22 @@ func getLines(it *rss.Item) ([]string, error) {
 	return strings.Split(linesStr, ", "), nil
 }
 
-func parseRssItem(it *rss.Item) (ZTMevent, error) {
+func parseRssItem(it *rss.Item) (*ZTMevent, error) {
 	log.Print("Link=", it.Link)
 	log.Print("Title=", it.Title)
 	log.Print("Summery=", it.Summary)
 	defer log.Print("--------")
 	id, err := getId(it)
 	if err != nil {
-		return ZTMevent{}, err
+		return nil, err
 	}
 	content, err := getContent(it)
 	if err != nil {
-		return ZTMevent{}, err
+		return nil, err
 	}
 	lines, err := getLines(it)
 	if err != nil {
-		return ZTMevent{}, err
+		return nil, err
 	}
 
 	newIt := ZTMevent{
@@ -94,7 +94,7 @@ func parseRssItem(it *rss.Item) (ZTMevent, error) {
 		Title: it.Summary,
 		Content: content,
 	}
-	return newIt, nil
+	return &newIt, nil
 }
 
 func parseRSSFeed(feed []*rss.Item) ([]*ZTMevent, error) {
@@ -104,7 +104,7 @@ func parseRSSFeed(feed []*rss.Item) ([]*ZTMevent, error) {
 		if err != nil {
 			return newFeed, err
 		}
-		newFeed = append(newFeed, &newIt)
+		newFeed = append(newFeed, newIt)
 	}
 	return newFeed, nil
 }
